@@ -1443,6 +1443,14 @@ const cancelConfirm = () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+.performance-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
 .performance-info {
   display: flex;
   align-items: center;
@@ -1484,6 +1492,7 @@ const cancelConfirm = () => {
 .performance-actions {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .card-body {
