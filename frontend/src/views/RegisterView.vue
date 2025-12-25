@@ -1,36 +1,84 @@
 <template>
   <div class="auth-container">
-    <h1 class="logo">HR System <span class="tag">Portal</span></h1>
+    <h1 class="logo">
+      HR System <span class="tag">Portal</span>
+    </h1>
     <div class="card">
       <div class="tabs">
-        <button class="tab" @click="$router.push('/login')">Login</button>
-        <button class="tab active">Register</button>
+        <button
+          class="tab"
+          @click="$router.push('/login')"
+        >
+          Login
+        </button>
+        <button class="tab active">
+          Register
+        </button>
       </div>
 
-      <form @submit.prevent="handleRegister" class="auth-form">
+      <form
+        class="auth-form"
+        @submit.prevent="handleRegister"
+      >
         <div class="form-group">
           <label for="reg-username">Username</label>
-          <input id="reg-username" name="username" type="text" v-model="form.username" required>
+          <input
+            id="reg-username"
+            v-model="form.username"
+            name="username"
+            type="text"
+            required
+          >
         </div>
         <div class="form-group">
           <label for="reg-email">Email</label>
-          <input id="reg-email" name="email" type="email" v-model="form.email" required>
+          <input
+            id="reg-email"
+            v-model="form.email"
+            name="email"
+            type="email"
+            required
+          >
         </div>
         <div class="form-group">
           <label for="reg-password">Password</label>
-          <input id="reg-password" name="password" type="password" v-model="form.password" required>
+          <input
+            id="reg-password"
+            v-model="form.password"
+            name="password"
+            type="password"
+            required
+          >
         </div>
         <div class="form-group">
           <label for="reg-role">Role</label>
-          <select id="reg-role" name="role" v-model="form.role" class="form-select">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
+          <select
+            id="reg-role"
+            v-model="form.role"
+            name="role"
+            class="form-select"
+          >
+            <option value="user">
+              User
+            </option>
+            <option value="admin">
+              Admin
+            </option>
           </select>
         </div>
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          :disabled="loading"
+        >
           {{ loading ? 'Creating Account...' : 'Create Account' }}
         </button>
-        <div v-if="error" class="message error">{{ error }}</div>
+        <div
+          v-if="error"
+          class="message error"
+        >
+          {{ error }}
+        </div>
       </form>
     </div>
   </div>

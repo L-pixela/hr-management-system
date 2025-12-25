@@ -24,6 +24,18 @@ services:
     networks:
       - cadt_net
 
+  performance-service:
+    build: ./performance-service
+    ports:
+      - "4002:4002"
+    env_file:
+      - ./performance-service/.env
+    depends_on:
+      - mongo
+      - auth-service
+    networks:
+      - cadt_net
+
   frontend-service:
     build:
       context: ./frontend
@@ -34,6 +46,7 @@ services:
     depends_on:
       - auth-service
       - employee-service
+      - performance-service
 
   nginx:
     image: nginx:stable-alpine
@@ -44,6 +57,7 @@ services:
     depends_on:
       - auth-service
       - employee-service
+      - performance-service
       - frontend-service
     networks:
       - cadt_net

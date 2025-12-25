@@ -1,8 +1,29 @@
 <template>
   <div class="dashboard-container">
     <header class="dashboard-header">
-      <h2>Welcome, {{ user?.username || 'User' }}</h2>
-      <button @click="logout" class="btn btn-secondary">Logout</button>
+      <div class="header-left">
+        <h2>Welcome, {{ user?.username || 'User' }}</h2>
+        <nav class="nav-links">
+          <router-link
+            to="/"
+            class="nav-link"
+          >
+            Dashboard
+          </router-link>
+          <router-link
+            to="/performance"
+            class="nav-link"
+          >
+            Performance
+          </router-link>
+        </nav>
+      </div>
+      <button
+        class="btn btn-secondary"
+        @click="logout"
+      >
+        Logout
+      </button>
     </header>
 
     <div class="grid-layout">
@@ -10,16 +31,35 @@
       <section class="card">
         <div class="card-header">
           <h3>Departments</h3>
-          <button @click="showDeptModal = true" class="btn btn-sm btn-outline">+ New</button>
+          <button
+            class="btn btn-sm btn-outline"
+            @click="showDeptModal = true"
+          >
+            + New
+          </button>
         </div>
         <div class="list-group">
-          <div v-if="departments.length === 0" class="list-item">No departments found</div>
-          <div v-for="dept in departments" :key="dept._id" class="list-item">
+          <div
+            v-if="departments.length === 0"
+            class="list-item"
+          >
+            No departments found
+          </div>
+          <div
+            v-for="dept in departments"
+            :key="dept._id"
+            class="list-item"
+          >
             <div class="item-info">
               <h4>{{ dept.name }}</h4>
               <p>{{ dept.description }}</p>
             </div>
-            <button @click="deleteDept(dept._id)" class="btn btn-sm btn-text text-danger">×</button>
+            <button
+              class="btn btn-sm btn-text text-danger"
+              @click="deleteDept(dept._id)"
+            >
+              ×
+            </button>
           </div>
         </div>
       </section>
@@ -28,69 +68,158 @@
       <section class="card">
         <div class="card-header">
           <h3>Employees</h3>
-          <button @click="showEmpModal = true" class="btn btn-sm btn-outline">+ New</button>
+          <button
+            class="btn btn-sm btn-outline"
+            @click="showEmpModal = true"
+          >
+            + New
+          </button>
         </div>
         <div class="list-group">
-          <div v-if="employees.length === 0" class="list-item">No employees found</div>
-          <div v-for="emp in employees" :key="emp._id" class="list-item">
+          <div
+            v-if="employees.length === 0"
+            class="list-item"
+          >
+            No employees found
+          </div>
+          <div
+            v-for="emp in employees"
+            :key="emp._id"
+            class="list-item"
+          >
             <div class="item-info">
               <h4>{{ emp.name }}</h4>
               <p>{{ emp.position }} • {{ emp.department?.name || 'No Dept' }}</p>
             </div>
-            <button @click="deleteEmp(emp._id)" class="btn btn-sm btn-text text-danger">×</button>
+            <button
+              class="btn btn-sm btn-text text-danger"
+              @click="deleteEmp(emp._id)"
+            >
+              ×
+            </button>
           </div>
         </div>
       </section>
     </div>
 
     <!-- Dept Modal -->
-    <div v-if="showDeptModal" class="modal">
+    <div
+      v-if="showDeptModal"
+      class="modal"
+    >
       <div class="modal-content">
         <h3>Add Department</h3>
         <form @submit.prevent="createDept">
           <div class="form-group">
             <label for="dept-name">Name</label>
-            <input id="dept-name" name="name" v-model="newDept.name" required>
+            <input
+              id="dept-name"
+              v-model="newDept.name"
+              name="name"
+              required
+            >
           </div>
           <div class="form-group">
             <label for="dept-desc">Description</label>
-            <textarea id="dept-desc" name="description" v-model="newDept.description"></textarea>
+            <textarea
+              id="dept-desc"
+              v-model="newDept.description"
+              name="description"
+            />
           </div>
           <div class="modal-actions">
-            <button type="button" @click="showDeptModal = false" class="btn btn-text">Cancel</button>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button
+              type="button"
+              class="btn btn-text"
+              @click="showDeptModal = false"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+            >
+              Save
+            </button>
           </div>
         </form>
       </div>
     </div>
 
     <!-- Emp Modal -->
-    <div v-if="showEmpModal" class="modal">
+    <div
+      v-if="showEmpModal"
+      class="modal"
+    >
       <div class="modal-content">
         <h3>Add Employee</h3>
         <form @submit.prevent="createEmp">
           <div class="form-group">
             <label for="emp-name">Name</label>
-            <input id="emp-name" name="name" v-model="newEmp.name" required>
+            <input
+              id="emp-name"
+              v-model="newEmp.name"
+              name="name"
+              required
+            >
           </div>
           <div class="form-group">
             <label for="emp-email">Email</label>
-            <input id="emp-email" name="email" type="email" v-model="newEmp.email" required>
+            <input
+              id="emp-email"
+              v-model="newEmp.email"
+              name="email"
+              type="email"
+              required
+            >
           </div>
           <div class="form-group">
             <label for="emp-position">Position</label>
-            <input id="emp-position" name="position" v-model="newEmp.position" required>
+            <input
+              id="emp-position"
+              v-model="newEmp.position"
+              name="position"
+              required
+            >
           </div>
           <div class="form-group">
             <label for="emp-dept">Department</label>
-            <select id="emp-dept" name="department" v-model="newEmp.department" required class="form-select">
-              <option v-for="d in departments" :key="d._id" :value="d._id">{{ d.name }}</option>
+            <select
+              id="emp-dept"
+              v-model="newEmp.department"
+              name="department"
+              required
+              class="form-select"
+            >
+              <option
+                v-for="d in departments"
+                :key="d._id"
+                :value="d._id"
+              >
+                {{ d.name }}
+              </option>
             </select>
           </div>
-          <div v-if="modalError" class="message error">{{ modalError }}</div>
+          <div
+            v-if="modalError"
+            class="message error"
+          >
+            {{ modalError }}
+          </div>
           <div class="modal-actions">
-            <button type="button" @click="showEmpModal = false; modalError = ''" class="btn btn-text">Cancel</button>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button
+              type="button"
+              class="btn btn-text"
+              @click="showEmpModal = false; modalError = ''"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+            >
+              Save
+            </button>
           </div>
         </form>
       </div>
@@ -178,6 +307,24 @@ const deleteEmp = async (id) => {
 <style scoped>
 .dashboard-container { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
 .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.header-left { display: flex; flex-direction: column; gap: 1rem; }
+.nav-links { display: flex; gap: 1rem; }
+.nav-link { 
+  text-decoration: none; 
+  color: #6c757d; 
+  font-weight: 500; 
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.nav-link:hover {
+  color: #007bff;
+  background: #f0f0f0;
+}
+.nav-link.router-link-active {
+  color: #007bff;
+  background: #e7f3ff;
+}
 .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
 .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 1.5rem; }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; }

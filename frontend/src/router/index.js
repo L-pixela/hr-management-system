@@ -2,21 +2,30 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import DashboardView from '../views/DashboardView.vue';
+import PerformanceView from '../views/PerformanceView.vue';
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes: [
-        { path: '/login', component: LoginView },
-        { path: '/register', component: RegisterView },
-        {
-            path: '/',
-            component: DashboardView,
-            beforeEnter: (to, from, next) => {
-                if (!localStorage.getItem('token')) next('/login');
-                else next();
-            }
-        }
-    ]
+  history: createWebHistory(),
+  routes: [
+    { path: '/login', component: LoginView },
+    { path: '/register', component: RegisterView },
+    {
+      path: '/',
+      component: DashboardView,
+      beforeEnter: (to, from, next) => {
+        if (!localStorage.getItem('token')) next('/login');
+        else next();
+      }
+    },
+    {
+      path: '/performance',
+      component: PerformanceView,
+      beforeEnter: (to, from, next) => {
+        if (!localStorage.getItem('token')) next('/login');
+        else next();
+      }
+    }
+  ]
 });
 
 export default router;

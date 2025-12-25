@@ -8,6 +8,7 @@ Complete API reference for the HR Management microservices system with request/r
 - [Auth Service API](#auth-service-api)
 - [Employee Service API](#employee-service-api)
 - [Department Service API](#department-service-api)
+- [Performance Service API](#performance-service-api)
 - [Error Responses](#error-responses)
 
 ---
@@ -19,11 +20,13 @@ When running with Docker Compose:
 - **Auth Service**: `http://localhost/auth`
 - **Employee Service**: `http://localhost/employees`
 - **Department Service**: `http://localhost/departments`
+- **Performance Service**: `http://localhost/performance`
 
 For local development (without Docker):
 - **Auth Service**: `http://localhost:4000/auth`
 - **Employee Service**: `http://localhost:4001/employees`
 - **Department Service**: `http://localhost:4001/departments`
+- **Performance Service**: `http://localhost:4002/performance`
 
 ---
 
@@ -903,7 +906,370 @@ You can import these endpoints into Postman by creating a new collection with th
 
 3. Add all endpoints from this documentation
 
+---Performance Service API
+
+All Performance Service endpoints require authentication. Include JWT token in Authorization header.
+
+### 📊 Performance Records Overview
+
+Performance records track employee performance reviews with scores, comments, and status.
+
+**Base Path**: `/performance`
+
 ---
+
+### 1. Get All Performance Records
+
+Get all performance records with optional filtering.
+
+**GET** `/performance`
+
+**Authentication**: Required (JWT)
+
+**Query Parameters**:
+- `employeeId` (optional): Filter by employee ID
+- `status` (optional): Filter by status (draft, submitted, approved)
+- `startDate` (optional): Filter by review date (ISO 8601 format)
+- `endDate` (optional): Filter by review date (ISO 8601 format)
+
+**Request Example**:
+```bash
+# Get all performance records
+curl -X GET http://localhost/performance \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# Get performance records for a specific employee
+curl -X GET "http://localhost/performance?employeeId=EMP001" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# Get approved performance records
+curl -X GET "http://localhost/performance?status=approved" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# Get records within date range
+curl -X GET "http://localhost/performance?startDate=2025-01-01&endDate=2025-12-31" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Success Response (200)**:
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "676c1234567890abcdef1234",
+      "employeeId": "EMP001",
+      "reviewDate": "2025-12-25T10:00:00.000Z",
+      "score": 85,
+      "comment": "Excellent performance this quarter",
+      "reviewedBy": "MGR001",
+      "status": "approved",
+      "createdAt": "2025-12-25T10:00:00.000Z",
+      "updatedAt": "2025-12-25T10:00:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+### 2. Get Performance Record by ID
+
+Get a specific performance record by its ID.
+
+**GET** `/performance/:id`
+
+**Authentication**: Required (JWT)
+
+**URL Parameters**:
+- `id`: Performance record ID (MongoDB ObjectId)
+
+**Request Example**:
+```bash
+curl -X GET http://localhost/performance/676c1234567890abcdef1234 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Success Response (200)**:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "676c1234567890abcdef1234",
+    "employeeId": "EMP001",
+    "reviewDate": "2025-12-25T10:00:00.000Z",
+    "score": 85,
+    "comment": "Excellent performance this quarter",
+    "reviewedBy": "MGR001",
+    "status": "approved",
+    "createdAt": "2025-12-25T10:00:00.000Z",
+    "updatedAt": "2025-12-25T10:00:00.000Z"
+  }
+}
+```
+
+**Error Response (404)**:
+```json
+{
+  "success": false,
+  "message": "Performance record not found"
+}
+```
+
+---
+
+### 3. Get Performance Records by Employee ID
+
+Get all performance records for a specific employee.
+
+**GET** `/performance/employee/:employeeId`
+
+**Authentication**: Required (JWT)
+
+**URL Parameters**:
+- `employeeId`: Employee ID
+
+**Request Example**:
+```bash
+curl -X GET http://localhost/performance/employee/EMP001 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Success Response (200)**:
+```json
+{
+  "success": true,
+  "count": 3,
+  "data": [
+    {
+      "_id": "676c1234567890abcdef1234",
+      "employeeId": "EMP001",
+      "reviewDate": "2025-12-25T10:00:00.000Z",
+      "score": 85,
+      "comment": "Q4 2025 Review",
+      "reviewedBy": "MGR001",
+      "status": "approved",
+      "createdAt": "2025-12-25T10:00:00.000Z",
+      "updatedAt": "2025-12-25T10:00:00.000Z"
+    },
+    {
+      "_id": "676c1234567890abcdef5678",
+      "employeeId": "EMP001",
+      "reviewDate": "2025-09-25T10:00:00.000Z",
+      "score": 82,
+      "comment": "Q3 2025 Review",
+      "reviewedBy": "MGR001",
+      "status": "approved",
+      "createdAt": "2025-09-25T10:00:00.000Z",
+      "updatedAt": "2025-09-25T10:00:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+### 4. Create Performance Record
+
+Create a new performance record.
+
+**POST** `/performance`
+
+**Authentication**: Required (JWT)
+
+**Request Body**:
+```json
+{
+  "employeeId": "EMP001",
+  "score": 85,
+  "comment": "Excellent performance this quarter. Met all objectives and exceeded expectations in key areas.",
+  "reviewedBy": "MGR001",
+  "status": "draft"
+}
+```
+
+**Field Validations**:
+- `employeeId` (required): Employee identifier
+- `score` (required): Performance score (0-100)
+- `comment` (optional): Review comments (max 1000 characters)
+- `reviewedBy` (required): Reviewer identifier
+- `status` (optional): Review status - draft, submitted, or approved (default: draft)
+
+**Request Example**:
+```bash
+curl -X POST http://localhost/performance \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "employeeId": "EMP001",
+    "score": 85,
+    "comment": "Excellent performance this quarter",
+    "reviewedBy": "MGR001",
+    "status": "draft"
+  }'
+```
+
+**Success Response (201)**:
+```json
+{
+  "success": true,
+  "message": "Performance record created successfully",
+  "data": {
+    "_id": "676c1234567890abcdef1234",
+    "employeeId": "EMP001",
+    "reviewDate": "2025-12-25T10:00:00.000Z",
+    "score": 85,
+    "comment": "Excellent performance this quarter",
+    "reviewedBy": "MGR001",
+    "status": "draft",
+    "createdAt": "2025-12-25T10:00:00.000Z",
+    "updatedAt": "2025-12-25T10:00:00.000Z"
+  }
+}
+```
+
+**Error Response (400)**:
+```json
+{
+  "success": false,
+  "message": "Employee ID, score, and reviewer are required"
+}
+```
+
+---
+
+### 5. Update Performance Record
+
+Update an existing performance record.
+
+**PUT** `/performance/:id`
+
+**Authentication**: Required (JWT)
+
+**URL Parameters**:
+- `id`: Performance record ID (MongoDB ObjectId)
+
+**Request Body** (all fields optional):
+```json
+{
+  "score": 90,
+  "comment": "Updated: Outstanding performance",
+  "reviewedBy": "MGR002",
+  "status": "approved"
+}
+```
+
+**Request Example**:
+```bash
+curl -X PUT http://localhost/performance/676c1234567890abcdef1234 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "score": 90,
+    "status": "approved"
+  }'
+```
+
+**Success Response (200)**:
+```json
+{
+  "success": true,
+  "message": "Performance record updated successfully",
+  "data": {
+    "_id": "676c1234567890abcdef1234",
+    "employeeId": "EMP001",
+    "reviewDate": "2025-12-25T10:00:00.000Z",
+    "score": 90,
+    "comment": "Updated: Outstanding performance",
+    "reviewedBy": "MGR002",
+    "status": "approved",
+    "createdAt": "2025-12-25T10:00:00.000Z",
+    "updatedAt": "2025-12-25T11:30:00.000Z"
+  }
+}
+```
+
+**Error Response (404)**:
+```json
+{
+  "success": false,
+  "message": "Performance record not found"
+}
+```
+
+---
+
+### 6. Delete Performance Record
+
+Delete a performance record by ID.
+
+**DELETE** `/performance/:id`
+
+**Authentication**: Required (JWT)
+
+**URL Parameters**:
+- `id`: Performance record ID (MongoDB ObjectId)
+
+**Request Example**:
+```bash
+curl -X DELETE http://localhost/performance/676c1234567890abcdef1234 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Success Response (200)**:
+```json
+{
+  "success": true,
+  "message": "Performance record deleted successfully"
+}
+```
+
+**Error Response (404)**:
+```json
+{
+  "success": false,
+  "message": "Performance record not found"
+}
+```
+
+---
+
+### Performance Service - Response Codes Summary
+
+| Status Code | Description |
+|-------------|-------------|
+| 200 | Success (GET, PUT, DELETE) |
+| 201 | Created (POST) |
+| 400 | Bad Request (Missing required fields) |
+| 401 | Unauthorized (Invalid or missing JWT token) |
+| 403 | Forbidden (Token expired) |
+| 404 | Not Found (Record doesn't exist) |
+| 500 | Server Error |
+
+---
+
+### Performance Service - Data Model
+
+```javascript
+{
+  employeeId: String (required),
+  reviewDate: Date (default: Date.now),
+  score: Number (required, 0-100),
+  comment: String (max: 1000 chars),
+  reviewedBy: String (required),
+  status: String (enum: ['draft', 'submitted', 'approved'], default: 'draft'),
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+**Indexes**:
+- `{ employeeId: 1, reviewDate: -1 }` - For faster employee performance history queries
+
+---
+
+## 
 
 ## Rate Limiting & Security
 

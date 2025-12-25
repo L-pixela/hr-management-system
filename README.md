@@ -1,32 +1,34 @@
 # Microservices Architecture - HR Management System
 
-A complete microservices-based HR management system with authentication and employee management services.
+A complete microservices-based HR management system with authentication, employee management, and performance tracking services.
 
 ## 🏗️ Architecture Overview
 
 This project consists of multiple microservices orchestrated with Docker Compose and routed through an Nginx API gateway:
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   Nginx Gateway                      │
-│                   (Port 80)                          │
-└───────┬─────────────────────┬──────────────────┬────┘
-        │                     │                  │
-        │ /auth/*             │ /employees/*     │ /departments/*
-        │                     │                  │
-   ┌────▼─────┐         ┌────▼──────────────────▼────┐
-   │  Auth    │         │    Employee Service         │
-   │ Service  │         │      (Port 4001)            │
-   │(Port 4000)│         │                             │
-   └────┬─────┘         └─────────┬───────────────────┘
-        │                         │
-        │                         │
-        │    ┌────────────────────▼──────────┐
-        │    │      MongoDB                  │
-        └────►  (Port 27017)                 │
-             │  - auth_db                    │
-             │  - employee_db                │
-             └───────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                        Nginx Gateway                        │
+│                      (Port 80)                              │
+└────────┬──────────┬──────────┬──────────────┬──────────────┘
+         │          │          │              │              
+    ┌────▼─────┐┌───▼────┐┌────▼─────┐┌──────▼───────┐       
+    │  Auth    ││Employee││Performance││  Frontend    │       
+    │ Service  ││ Service││  Service  ││   (Vue.js)   │       
+    │  :4000   ││  :4001 ││   :4002   ││              │       
+    └────┬─────┘└───┬────┘└────┬──────┘└──────────────┘       
+         │          │          │                               
+         └──────────┴──────────┴─────────┐                     
+                                         │                     
+                                   ┌─────▼──────┐              
+                                   │  MongoDB   │              
+                                   │   :27017   │              
+                                   │            │              
+                                   │ auth_db    │              
+                                   │ employee_db│              
+                                   │performance_│              
+                                   │     db     │              
+                                   └────────────┘              
 ```
 
 ## 📦 Services
@@ -48,6 +50,28 @@ This project consists of multiple microservices orchestrated with Docker Compose
   - Employee CRUD operations
   - Department management
   - JWT authentication middleware
+
+### 3. Performance Service (NEW! ⭐)
+- **Port**: 4002 (internal), accessed via `/performance/*` through nginx
+- **Database**: `performance_db`
+- **Features**:
+  - Performance review CRUD operations
+  - Employee performance tracking
+  - Score-based evaluation (0-100)
+  - Review status workflow (draft → submitted → approved)
+  - Filter by employee, status, date range
+  - JWT authentication middleware
+
+### 4. Frontend Service
+- **Technology**: Vue.js 3 + Vite
+- **Port**: 80 (internal), accessed via `/` through nginx
+- **Features**:
+  - User authentication UI (Login/Register)
+  - Employee management dashboard
+  - Department management
+  - **Performance management UI** (NEW! ⭐)
+  - Responsive design
+  - JWT token management
   - Protected endpoints
 
 ### 3. MongoDB

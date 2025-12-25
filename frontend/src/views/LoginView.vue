@@ -1,25 +1,59 @@
 <template>
   <div class="auth-container">
-    <h1 class="logo">HR System <span class="tag">Portal</span></h1>
+    <h1 class="logo">
+      HR System <span class="tag">Portal</span>
+    </h1>
     <div class="card">
       <div class="tabs">
-        <button class="tab active">Login</button>
-        <button class="tab" @click="$router.push('/register')">Register</button>
+        <button class="tab active">
+          Login
+        </button>
+        <button
+          class="tab"
+          @click="$router.push('/register')"
+        >
+          Register
+        </button>
       </div>
 
-      <form @submit.prevent="handleLogin" class="auth-form">
+      <form
+        class="auth-form"
+        @submit.prevent="handleLogin"
+      >
         <div class="form-group">
           <label for="login-email">Email</label>
-          <input id="login-email" name="email" type="email" v-model="email" placeholder="admin@example.com" required>
+          <input
+            id="login-email"
+            v-model="email"
+            name="email"
+            type="email"
+            placeholder="admin@example.com"
+            required
+          >
         </div>
         <div class="form-group">
           <label for="login-password">Password</label>
-          <input id="login-password" name="password" type="password" v-model="password" required>
+          <input
+            id="login-password"
+            v-model="password"
+            name="password"
+            type="password"
+            required
+          >
         </div>
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          :disabled="loading"
+        >
           {{ loading ? 'Signing In...' : 'Sign In' }}
         </button>
-        <div v-if="error" class="message error">{{ error }}</div>
+        <div
+          v-if="error"
+          class="message error"
+        >
+          {{ error }}
+        </div>
       </form>
     </div>
   </div>
