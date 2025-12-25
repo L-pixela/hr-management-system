@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-auth-service:
+    name: Test auth-service
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20.19.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+
+      - name: Cache auth-service node modules
+        uses: actions/cache@v4
+        with:
+          path: auth-service/node_modules
+          key: ${{ runner.os }}-auth-node-${{ hashFiles('auth-service/**/package-lock.json') }}
+
+      - name: Install & test auth-service
+        working-directory: ./auth-service
+        run: |
+          npm ci
+          npm test
+
+  test-employee-service:
+    name: Test employee_service
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20.19.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+
+      - name: Cache employee_service node modules
+        uses: actions/cache@v4
+        with:
+          path: employee_service/node_modules
+          key: ${{ runner.os }}-employee-node-${{ hashFiles('employee_service/**/package-lock.json') }}
+
+      - name: Install & test employee_service
+        working-directory: ./employee_service
+        run: |
+          npm ci
+          npm test

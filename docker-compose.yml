@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./auth-service/.env
+    depends_on:
+      - mongo
+    networks:
+      - cadt_net
+
+  employee-service:
+    build: ./employee_service
+    ports:
+      - "4001:4001"
+    env_file:
+      - ./employee_service/.env
+    depends_on:
+      - mongo
+      - auth-service
+    networks:
+      - cadt_net
+
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - auth-service
+      - employee-service
+    networks:
+      - cadt_net
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - cadt_net
+
+volumes:
+  mongo-data:
+
+networks:
+  cadt_net:
+    driver: bridge
