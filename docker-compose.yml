@@ -24,6 +24,11 @@ services:
     networks:
       - cadt_net
 
+  frontend-service:
+    build: ./frontend
+    networks:
+      - cadt_net
+
   nginx:
     image: nginx:stable-alpine
     ports:
@@ -33,6 +38,7 @@ services:
     depends_on:
       - auth-service
       - employee-service
+      - frontend-service
     networks:
       - cadt_net
 
@@ -47,6 +53,7 @@ services:
 
 volumes:
   mongo-data:
+
 
 networks:
   cadt_net:
