@@ -387,6 +387,26 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Verify Docker Hub credentials
+        run: |
+          echo "Verifying Docker Hub authentication..."
+          if [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
+            echo "❌ ERROR: DOCKERHUB_USERNAME secret is not set!"
+            echo "Please add DOCKERHUB_USERNAME to repository secrets"
+            exit 1
+          fi
+          
+          if [ -z "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
+            echo "❌ ERROR: DOCKERHUB_TOKEN secret is not set!"
+            echo "Please add DOCKERHUB_TOKEN to repository secrets"
+            exit 1
+          fi
+          
+          echo "✅ Docker Hub credentials configured"
+          echo "Username: ${{ secrets.DOCKERHUB_USERNAME }}"
+          echo "Note: If push fails with '401 Unauthorized: insufficient scopes',"
+          echo "regenerate your Docker Hub token with 'Read, Write, Delete' permissions"
+
       - name: Extract metadata
         id: meta
         run: |
@@ -405,7 +425,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/hr-auth-service:${{ steps.meta.outputs.date }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
 
       - name: Build and push employee-service
         uses: docker/build-push-action@v5
@@ -418,7 +438,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/hr-employee-service:${{ steps.meta.outputs.date }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
 
       - name: Build and push performance-service
         uses: docker/build-push-action@v5
@@ -431,7 +451,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/hr-performance-service:${{ steps.meta.outputs.date }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
 
       - name: Build and push frontend
         uses: docker/build-push-action@v5
@@ -444,7 +464,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/hr-frontend:${{ steps.meta.outputs.date }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
 
       - name: Build and push nginx
         uses: docker/build-push-action@v5
@@ -458,7 +478,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/hr-nginx:${{ steps.meta.outputs.date }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
 
       - name: Create deployment summary
         run: |
@@ -476,6 +496,6 @@ jobs:
           echo "- **Commit**: \`${{ steps.meta.outputs.sha_short }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Timestamp**: \`${{ steps.meta.outputs.date }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Platforms:" >> $GITHUB_STEP_SUMMARY
-          echo "- linux/amd64" >> $GITHUB_STEP_SUMMARY
+          echo "### Platform:" >> $GITHUB_STEP_SUMMARY
+          echo "- linux/amd64 (optimized for faster builds)" >> $GITHUB_STEP_SUMMARY
           echo "- linux/arm64" >> $GITHUB_STEP_SUMMARY
