@@ -308,10 +308,10 @@ jobs:
         run: docker compose logs
 
       - name: Run microservices integration tests
-        run: node test-microservices.js
+        run: node test/test-microservices.js
 
       - name: Run department integration tests
-        run: node test-departments.js
+        run: node test/test-departments.js
 
       - name: Check container status
         if: always()
