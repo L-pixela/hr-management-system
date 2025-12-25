@@ -6,6 +6,23 @@ export default defineConfig({
     plugins: [vue()],
     server: {
         host: true,
-        port: 80
+        port: 5173,
+        proxy: {
+            '/auth': {
+                target: 'http://localhost',
+                changeOrigin: true,
+                rewrite: (path) => path
+            },
+            '/employees': {
+                target: 'http://localhost',
+                changeOrigin: true,
+                rewrite: (path) => path
+            },
+            '/departments': {
+                target: 'http://localhost',
+                changeOrigin: true,
+                rewrite: (path) => path
+            }
+        }
     }
 })

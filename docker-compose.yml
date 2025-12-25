@@ -25,9 +25,15 @@ services:
       - cadt_net
 
   frontend-service:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: project-frontend-1
     networks:
       - cadt_net
+    depends_on:
+      - auth-service
+      - employee-service
 
   nginx:
     image: nginx:stable-alpine

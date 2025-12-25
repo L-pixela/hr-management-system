@@ -1,10 +1,13 @@
 import axios from 'axios';
 
+// When running in Docker, API calls go through the same nginx gateway
+// When running in dev mode (npm run dev), vite proxy handles the routing
 const client = axios.create({
-    baseURL: '/', // Relative path to use Nginx proxy
+    baseURL: '/',
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    withCredentials: false
 });
 
 // Add a request interceptor to inject the token
