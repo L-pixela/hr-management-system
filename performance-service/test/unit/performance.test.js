@@ -1,22 +1,31 @@
 const request = require('supertest');
-const app = require('../src/app');
-const Performance = require('../src/models/performance.model');
-const mongoose = require('mongoose');
 
-// Mock mongoose
+// Mock mongoose BEFORE importing anything
 jest.mock('mongoose', () => ({
-  connect: jest.fn(),
+  connect: jest.fn().mockResolvedValue(true),
   connection: {
     on: jest.fn(),
   },
-  model: jest.fn(),
-  Schema: jest.fn(() => ({
-    index: jest.fn(),
+  model: jest.fn(() => ({
+    find: jest.fn(),
+    findById: jest.fn(),
+    findByIdAndDelete: jest.fn(),
   })),
+  Schema: jest.fn(function(definition) {
+    this.index = jest.fn();
+    return this;
+  }),
 }));
 
 // Mock Performance model
-jest.mock('../src/models/performance.model');
+jest.mock('../../src/models/performance.model', () => {
+  return jest.fn().mockImplementation(() => ({
+    save: jest.fn(),
+  }));
+});
+
+const app = require('../../src/app');
+const Performance = require('../../src/models/performance.model');
 
 describe('Performance Service - Unit Tests', () => {
   beforeEach(() => {
