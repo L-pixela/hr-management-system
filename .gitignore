@@ -1,11 +1,33 @@
-# Node modules (if running npm commands in root)
+# Node modules
 node_modules/
+**/node_modules/
 
-# Environment files
+# Environment files - SENSITIVE
 .env
 .env.local
 .env.*.local
 *.env
+!.env.example
+!.env.development
+!.env.production
+**/.env
+**/.env.local
+**/.env.*.local
+
+# Secrets and credentials - SENSITIVE
+secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+*.cer
+*.crt
+*.der
+*.jks
+*.keystore
+*-key.json
+credentials.json
+service-account.json
 
 # Logs
 logs
@@ -13,6 +35,8 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
 
 # Runtime data
 pids
@@ -23,10 +47,15 @@ pids
 # Testing
 coverage/
 .nyc_output
+*.lcov
+.jest/
+test-results/
+junit.xml
 
 # Build output
 dist/
 build/
+out/
 
 # Cache
 .cache/
@@ -36,6 +65,10 @@ build/
 
 # IDE and Editor files
 .vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
@@ -45,6 +78,8 @@ build/
 .settings/
 *.sublime-project
 *.sublime-workspace
+.history/
+*.code-workspace
 
 # OS files
 .DS_Store
@@ -55,10 +90,26 @@ Desktop.ini
 # Docker
 docker-compose.override.yml
 .dockerignore
+**/docker-compose.override.yml
+volumes/
+docker-volumes/
 
-# MongoDB data (if running locally)
+# MongoDB data - SENSITIVE
 data/
 mongo-data/
+**/data/
+**/mongo-data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Database dumps and backups - SENSITIVE  
+*.sql
+*.dump
+*.bak
+backup/
+backups/
+db-backup/
 
 # Optional npm cache directory
 .npm
@@ -79,3 +130,14 @@ yarn-error.log
 # Temporary files
 *.tmp
 temp/
+tmp/
+.temp/
+
+# Lock files (optional - uncomment to ignore)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Development files
+*.local
+*.development

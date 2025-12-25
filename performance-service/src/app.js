@@ -13,20 +13,29 @@ const corsOptions = {
     if (!origin) return callback(null, true);
     
     const allowedOrigins = [
-      'http://localhost:5173',  // Vite dev server
-      'http://localhost:80',     // Frontend in Docker
-      'http://localhost',        // Frontend
-      /^http:\/\/localhost:\d+$/ // Any localhost port
+      'http://localhost:80',
+      'http://localhost',
+      'http://127.0.0.1:80',
+      'http://127.0.0.1',
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:4173',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:5173',
     ];
     
-    const isAllowed = allowedOrigins.some(allowed => {
-      if (allowed instanceof RegExp) {
-        return allowed.test(origin);
-      }
-      return allowed === origin;
-    });
+    // In production, add your deployed frontend URL
+    if (process.env.FRONTEND_URL) {
+      allowedOrigins.push(process.env.FRONTEND_URL);
+    }
     
-    if (isAllowed) {
+    // Allow all origins in development
+    if (process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
